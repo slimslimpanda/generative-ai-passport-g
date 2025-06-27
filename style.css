@@ -1,0 +1,163 @@
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+h1 {
+    color: #1d3557;
+    margin-bottom: 2rem;
+}
+
+.controls {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+#random-btn, #search-input, #chapter-select {
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    border: none;
+    background-color: #457b9d;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#search-input::placeholder {
+    color: white;
+}
+
+#random-btn:hover, #search-input:hover, #chapter-select:hover {
+    background-color: #1d3557;
+}
+
+#chapter-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.8em;
+    padding-right: 3rem;
+}
+
+.autocomplete {
+    position: relative;
+    display: inline-block;
+}
+
+#search-input {
+    width: 250px;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+    background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+#flashcard-container {
+    perspective: 1000px;
+    width: 400px;
+    height: 250px;
+}
+
+#flashcard {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+}
+
+#flashcard.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    padding: 25px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.15);
+}
+
+.card-front {
+    background: linear-gradient(135deg, #a8dadc, #457b9d);
+    color: white;
+}
+
+.card-back {
+    background: #f1faee;
+    color: #1d3557;
+    transform: rotateY(180deg);
+}
+
+#chapter {
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    color: #f1faee;
+}
+
+#term {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+#definition {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+#link {
+    font-size: 1rem;
+    color: #e63946;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#link:hover {
+    color: #d90429;
+    text-decoration: underline;
+}

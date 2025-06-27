@@ -1,1 +1,9 @@
-# generative-ai-passport-g
+# 単語帳アプリ
+
+# 要件
+- 紙の単語帳(Flash Card)のように、表には単語、裏には意味と参考URLを表示する
+- 生成AIパスポート試験を対象とする
+- １つの単語は、以下のJson形式とする。
+{"chapter":"生成AIパスポートのシラバス記載の章", "term":"単語","definition":"意味","link":"参考URL"}
+- 単語はランダム表示と、索引から選んで表示できるようにする
+- HTML, Javascript, cssで作成する

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成AIパスポート試験対策単語帳</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>生成AIパスポート試験対策単語帳</h1>
+    <div class="controls">
+        <select id="chapter-select">
+            <option value="all">すべての章</option>
+        </select>
+        <button id="random-btn">ランダム表示</button>
+        <div class="autocomplete">
+            <input id="search-input" type="text" placeholder="索引から検索...">
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+        </div>
+    </div>
+    <div id="flashcard-container">
+        <div id="flashcard">
+            <div class="card-face card-front">
+                <p id="chapter"></p>
+                <p id="term"></p>
+            </div>
+            <div class="card-face card-back">
+                <p id="definition"></p>
+                <a id="link" href="#" target="_blank">参考URL</a>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
