@@ -7,6 +7,11 @@ const randomBtn = document.getElementById('random-btn');
 const searchInput = document.getElementById('search-input');
 const autocompleteList = document.getElementById('autocomplete-list');
 const chapterSelect = document.getElementById('chapter-select'); // 章選択用の要素
+const flashcardContainer = document.getElementById('flashcard-container');
+
+let currentIndex = 0;
+let touchStartX = 0;
+let touchEndX = 0;
 
 const words = [
   {
@@ -244,394 +249,490 @@ const words = [
     "link": "https://ja.wikipedia.org/wiki/AI%E5%8A%B9%E6%9E%9C"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
-    "term": "生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
+    "term": "生成AI",
     "definition": "テキスト、画像、音声などの様々な形式のデータを、既存のデータから学習したパターンに基づいて新たに生成するAIの総称。",
     "link": "https://ja.wikipedia.org/wiki/%E7%94%9F%E6%88%90AI"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ボルツマンマシン",
     "definition": "深層学習の初期に研究された確率的な生成モデルの一つ。隠れ層を持つニューラルネットワークで、学習によってデータ分布をモデル化する。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%9C%E3%83%AB%E3%83%84%E3%83%9E%E3%83%B3%E3%83%9E%E3%82%B7%E3%83%B3"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "制約付きボルツマンマシン",
     "definition": "ボルツマンマシンの変種で、隠れ層間の接続がないことで学習が容易になったモデル。レコメンデーションシステムなどで利用された。",
     "link": "https://ja.wikipedia.org/wiki/%E5%88%B6%E7%B4%84%E4%BB%B6%E3%81%8D%E3%83%9C%E3%83%AB%E3%83%84%E3%83%9E%E3%83%B3%E3%83%9E%E3%82%B7%E3%83%B3"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "自己回帰モデル",
     "definition": "時系列データやシーケンスデータにおいて、過去のデータ点や前の要素に基づいて次のデータ点や要素を予測・生成するモデル。",
     "link": "https://ja.wikipedia.org/wiki/%E8%87%AA%E5%B7%B1%E5%9B%9E%E5%B8%B0%E3%83%A2%E3%83%87%E3%83%AB"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "CNN (畳み込みニューラルネットワーク)",
     "definition": "画像データなどの空間的なパターン認識に特化したディープラーニングのネットワークアーキテクチャ。畳み込み層とプーリング層を特徴とする。",
     "link": "https://ja.wikipedia.org/wiki/%E7%95%B3%E3%81%BF%E8%BE%BC%E3%81%BF%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%A9%E3%83%AB%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "畳み込み",
     "definition": "CNNにおける主要な演算の一つ。フィルター（カーネル）を用いて入力データ（画像など）の特徴を抽出し、特徴マップを生成する操作。",
     "link": "https://ja.wikipedia.org/wiki/%E3%82%BF%E3%83%83%E3%83%88%E3%83%91%E3%83%83%E3%83%88%E5%85%A5%E5%8A%9B%E5%B1%A4"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "VAE (変分自己符号化器)",
     "definition": "データの生成と潜在表現の学習を同時に行う生成モデルの一つ。エンコーダでデータを潜在空間に圧縮し、デコーダでその潜在表現からデータを再構築する。",
     "link": "https://jitera.com/ja/insights/34682"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ノイズ",
     "definition": "信号やデータに混入する不要な成分。VAEでは、潜在空間にノイズを加えることで、生成されるデータの多様性を高める。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%8E%E3%82%A4%E3%82%BA"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "エンコーダ",
     "definition": "VAEの一部で、入力データをより低次元の潜在空間表現に変換（符号化）する役割を持つニューラルネットワーク。",
     "link": "https://cvml-expertguide.net/terms/dl/encoder-decoder/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "デコーダ",
     "definition": "VAEの一部で、潜在空間表現から元のデータ形式に再構築（復号化）する役割を持つニューラルネットワーク。",
     "link": "https://cvml-expertguide.net/terms/dl/encoder-decoder/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "潜在ベクトル",
     "definition": "VAEにおいて、入力データの抽象的な特徴や意味を低次元の数値ベクトルとして表現したもの。このベクトルを操作することで新たなデータを生成できる。",
     "link": "https://ledge.ai/latent-space/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GAN (敵対的生成ネットワーク)",
     "definition": "生成器（Generator）と識別器（Discriminator）という2つのネットワークが互いに競い合いながら学習することで、リアルなデータを生成するモデル。",
     "link": "https://ja.wikipedia.org/wiki/%E6%95%B5%E5%AF%BE%E7%9A%84%E7%94%9F%E6%88%90%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "生成器",
     "definition": "GANの一部で、ランダムなノイズを入力として受け取り、偽のデータ（画像、テキストなど）を生成するネットワーク。",
     "link": "https://ledge.ai/generative-adversarial-networks/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "識別器",
     "definition": "GANの一部で、与えられたデータが本物か偽物か（生成器が作ったものか）を識別するネットワーク。",
     "link": "https://ledge.ai/generative-adversarial-networks/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "RNN (回帰型ニューラルネットワーク)",
     "definition": "時系列データやシーケンスデータ（音声、テキストなど）の処理に適したニューラルネットワーク。過去の情報を記憶し、次の出力を予測する。",
     "link": "https://ja.wikipedia.org/wiki/%E5%9B%9E%E5%B8%B0%E5%9E%8B%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%A9%E3%83%AB%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "隠れ",
     "definition": "ニューラルネットワークの入力層と出力層の間に存在する層。ここで複雑な特徴抽出や変換が行われる。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%A9%E3%83%AB%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF#%E5%B1%A4"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "リカレント",
     "definition": "RNNの特性を指す言葉で、ネットワーク内部に自己ループを持ち、過去の情報を再帰的に利用することを意味する。",
     "link": "https://ja.wikipedia.org/wiki/%E5%9B%9E%E5%B8%B0%E5%9E%8B%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%A9%E3%83%AB%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "シーケンスデータ",
     "definition": "要素が順序を持つデータ。時系列データやテキストデータなどが該当する。",
     "link": "https://e-words.jp/w/%E3%82%B7%E3%83%BC%E3%82%B1%E3%83%B3%E3%82%B9%E3%83%87%E3%83%BC%E3%82%BF.html"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "LSTM (長・短期記憶)",
     "definition": "RNNの一種で、長期的な依存関係を学習できる能力を持つ。従来のRNNが抱える勾配消失問題を解決するために開発された。",
     "link": "https://ja.wikipedia.org/wiki/%E9%95%B7%E3%83%BB%E7%9F%AD%E6%9C%9F%E8%A8%98%E6%86%B6"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Transformerモデル",
     "definition": "Attentionメカニズムのみで学習を行うニューラルネットワークのアーキテクチャ。RNNの欠点を克服し、自然言語処理分野で高い性能を発揮している。",
     "link": "https://ja.wikipedia.org/wiki/Transformer"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Attention",
     "definition": "Transformerモデルにおいて、入力シーケンスの異なる部分の重要度を動的に計算し、その情報に「注意」を向けるメカニズム。",
     "link": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%86%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%A1%E3%82%AB%E3%83%8B%E3%82%Bズム"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "自己注意力(Self-Attention)",
     "definition": "Attentionメカニズムの一種で、入力シーケンス内の異なる位置にある要素同士の関連性を計算し、各要素の表現を豊かにする仕組み。",
     "link": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%86%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%A1%E3%82%AB%E3%83%8B%E3%82%Bズム#Self-Attention"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Attention Mechanism",
     "definition": "人工ニューラルネットワークにおいて、入力データのある部分を強化し、他の部分を弱化する効果を持つ手法。",
     "link": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%86%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%A1%E3%82%AB%E3%83%8B%E3%82%Bズム"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "位置エンコーディング",
     "definition": "Transformerモデルにおいて、単語の順序や位置情報をモデルに伝えるための仕組み。Attentionメカニズムが位置情報を考慮しないため必要となる。",
     "link": "https://towardsdatascience.com/positional-encoding-in-transformer-models-8a1835560a6e"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "アーキテクチャ",
     "definition": "AIモデルやシステムの全体的な設計や構造。データの流れ、各コンポーネントの役割、それらの相互作用などを指す。",
     "link": "https://e-words.jp/w/%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3.html"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GPTモデル",
     "definition": "OpenAIが開発したTransformerベースの事前学習済み言語モデルのシリーズ。大量のテキストデータで学習されており、高い文章生成能力を持つ。",
     "link": "https://ja.wikipedia.org/wiki/GPT"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Open AI",
     "definition": "人工知能の研究と開発を行うアメリカの非営利団体および企業。ChatGPTなどを開発し、AI技術の普及に貢献している。",
     "link": "https://ja.wikipedia.org/wiki/OpenAI"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "BERTモデル",
     "definition": "Googleが開発した自然言語処理モデルで、TransformerのEncoder部分を双方向で利用する。文脈を理解し、様々なNLPタスクで高い精度を発揮する。",
     "link": "https://ja.wikipedia.org/wiki/BERT_(%E8%A8%80%E8%AA%9E%E3%83%A2%E3%83%87%E3%83%AB)"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "MLM (Masked Language Model)",
     "definition": "BERTなどの事前学習タスクの一つ。文章中の単語の一部をマスクし、周囲の文脈からマスクされた単語を予測するようにモデルを学習させる。",
     "link": "https://towardsdatascience.com/masked-language-model-mlm-and-next-sentence-prediction-nsp-explained-bf7c1266205"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "NSP (Next Sentence Prediction)",
     "definition": "BERTなどの事前学習タスクの一つ。2つの文が連続しているかを予測させることで、文間の関係性を理解するようにモデルを学習させる。",
     "link": "https://towardsdatascience.com/masked-language-model-mlm-and-next-sentence-prediction-nsp-explained-bf7c1266205"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ROBERTa",
     "definition": "BERTを改良した言語モデル。より多くのデータと長い学習時間、最適化された事前学習タスクを使用することで、BERTよりも性能が向上している。",
     "link": "https://ja.wikipedia.org/wiki/RoBERTa"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ALBERT (a Lite BERT)",
     "definition": "BERTを軽量化したモデル。パラメータ共有や埋め込み因数分解などの手法を用いることで、モデルサイズを小さくしながらも高い性能を維持する。",
     "link": "https://arxiv.org/abs/1909.11942"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ChatGPT",
     "definition": "米OpenAI社によって開発された、人間との対話に近い自然な文章を生成するAIチャットサービス。",
     "link": "https://ja.wikipedia.org/wiki/ChatGPT"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GPT-1",
     "definition": "OpenAIが開発した最初のGenerative Pre-trained Transformerモデル。大規模なテキストデータで事前学習され、ファインチューニングによって様々な自然言語処理タスクに適用可能だった。",
     "link": "https://openai.com/research/language-models-are-unsupervised-multitask-learners"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "自然言語処理(NLP)",
     "definition": "人間の自然言語（日本語、英語など）をコンピュータに理解させ、処理させる技術分野。機械翻訳、文章要約、感情分析などが含まれる。",
     "link": "https://ja.wikipedia.org/wiki/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GPT-2",
     "definition": "GPT-1の後継モデルで、さらに大規模なデータで学習され、より高品質な文章生成が可能になった。倫理的な懸念から当初は完全版が公開されなかった。",
     "link": "https://openai.com/research/better-language-models"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "パラメータ",
     "definition": "機械学習モデルが学習中に調整する内部変数。ニューラルネットワークにおける重みやバイアスなどがこれに該当する。",
     "link": "https://e-words.jp/w/%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF.html"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "InstructGPT",
     "definition": "人間のフィードバックからの強化学習（RLHF）を用いて、GPT-3を指示に従いやすく、ハルシネーションを減らすようにファインチューニングされたモデル。",
     "link": "https://openai.com/research/instructgpt"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GPT-3.5",
     "definition": "InstructGPTをベースにしたモデルで、ChatGPTの初期バージョンにも利用された。より自然で対話的な応答が可能になった。",
     "link": "https://openai.com/blog/chatgpt"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GPT-4",
     "definition": "OpenAIによって開発されたGPTシリーズの最新モデルの一つ。マルチモーダルに対応し、テキストだけでなく画像入力も処理できるなど、大幅に性能が向上した。",
     "link": "https://openai.com/research/gpt-4"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "データセット",
     "definition": "機械学習モデルの訓練、検証、テストに用いられるデータの集合。大量かつ多様なデータがモデルの性能向上に不可欠。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%87%E3%83%BC%E3%82%BF%E3%82%BB%E3%83%83%E3%83%88"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "RLHF (Reinforcement Learning from Human Feedback)",
     "definition": "人間のフィードバック（評価）を報酬として用い、強化学習によってAIモデルを調整する手法。AIが人間の意図に沿った出力を生成できるようになる。",
     "link": "https://ja.wikipedia.org/wiki/%E4%BA%BA%E9%96%93%E3%81%AE%E3%83%95%E3%82%A3%E3%83%BC%E3%83%89%E3%83%90%E3%83%83%E3%82%AF%E3%81%8B%E3%82%89%E3%81%AE%E5%BC%B7%E5%8C%96%E5%AD%A6%E7%BF%92"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "アライメント (Alignment)",
     "definition": "AIシステムが人間の価値観や意図、目標と一致するように設計・開発されること。AIが望ましくない行動をとるリスクを低減する目的がある。",
     "link": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%A9%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88_(%E4%BA%BA%E5%B7%A5%E7%9F%A5%E8%83%BD)"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ファインチューニング",
     "definition": "事前学習済みのモデルを、特定のタスクやデータセットに合わせてさらに学習させること。既存の知識を活用し、効率的にモデルを最適化できる。",
     "link": "https://ledge.ai/fine-tuning/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ハルシネーション (Hallucination)",
     "definition": "生成AIが事実に基づかない、または論理的に誤った情報を、もっともらしく生成してしまう現象。幻覚と訳されることもある。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%8F%E3%83%AB%E3%82%B7%E3%83%8D%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3_(%E4%BA%BA%E5%B7%A5%E7%9F%A5%E8%83%BD)"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "マルチモーダル",
     "definition": "複数の異なる種類のデータ（テキスト、画像、音声など）を同時に処理・理解・生成できるAIの能力。例：画像とテキストを組み合わせて理解するAI。",
     "link": "https://ledge.ai/multi-modal-ai/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Code Interpreter",
     "definition": "ChatGPT内でPythonのコードを実行できる機能。プログラミングの知識がなくとも会話による指示のみで、プログラムに変換しフィードバックしてくれる。",
     "link": "https://openai.com/blog/chatgpt-plugins"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GPTS",
     "definition": "ChatGPTを個々のニーズに合わせてカスタマイズできる機能。特定の目的やタスクに特化したChatGPTのバージョンを作成できる。",
     "link": "https://openai.com/blog/introducing-gpts"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "GPT-4o",
     "definition": "OpenAIが開発した最新のマルチモーダルモデル。「omni」（すべての）を意味し、テキスト、音声、画像を統合的に処理する能力を持つ。",
     "link": "https://openai.com/gpt-4o/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "テキスト生成AI",
     "definition": "自然言語処理技術を用いて、人間が書いたような自然な文章を自動的に生成するAI。要約、翻訳、記事作成などに利用される。",
     "link": "https://ledge.ai/text-generation-ai/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "画像生成AI",
     "definition": "テキスト記述やその他の入力に基づいて、リアルな画像やイラストを生成するAI。GANや拡散モデルなどが主要な技術。",
     "link": "https://ledge.ai/image-generation-ai/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "音楽生成AI",
     "definition": "ジャンルや気分、楽器構成などの指定に基づいて、オリジナルの音楽を生成するAI。作曲支援やBGM作成に利用される。",
     "link": "https://ledge.ai/ai-music-generation/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "音声生成AI",
     "definition": "テキストから自然な音声を生成するAI（テキスト音声合成）や、既存の音声から新しい音声を生成するAI。ナレーションやバーチャルアシスタントに利用される。",
     "link": "https://ledge.ai/voice-synthesis-ai/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "画像のリサイズ",
     "definition": "画像の縦横のピクセル数を変更して、画像の大きさを調整する処理。",
     "link": "https://ja.wikipedia.org/wiki/%E7%94%BB%E5%83%8F%E3%81%AE%E3%83%AA%E3%82%B5%E3%82%A4%E3%82%BA"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "正規化",
     "definition": "画像処理において、ピクセル値の範囲を特定の区間（例：0-1）に変換する処理。モデルの学習効率を高める。",
     "link": "https://ja.wikipedia.org/wiki/%E6%AD%A3%E8%A6%8F%E5%8C%96_(%E6%95%B0%E5%AD%A6)"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "データの水増し (augmentation)",
     "definition": "機械学習において、既存のデータに変換（回転、拡大縮小、反転など）を施すことで、学習データの量を擬似的に増やし、モデルの汎化能力を高める手法。",
     "link": "https://ledge.ai/data-augmentation/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "データ拡張技術",
     "definition": "データの水増しと同義。限られたデータからモデルの性能を向上させるために、既存データに多様な変換を加えてデータ量を増やす技術。",
     "link": "https://ledge.ai/data-augmentation/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "リマスタリング",
     "definition": "既存の音源や映像の品質を向上させるための再編集作業。AIがこれを自動で行う技術も開発されている。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%AA%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Claude",
     "definition": "Anthropic社が開発したチャット型生成AIツール。自然な会話能力や大量の文字数を処理する能力に優れる。",
     "link": "https://www.anthropic.com/index/claude"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Gemini",
     "definition": "Googleによって開発されたマルチモーダルAIモデル。テキスト、画像、音声、動画など多様な情報を理解し、生成できる。",
     "link": "https://gemini.google.com/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Sora",
     "definition": "OpenAIが開発中のテキストから動画を生成するAIモデル。高品質で写実的な動画を生成する能力を持つ。",
     "link": "https://openai.com/sora"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Runway Gen-3",
     "definition": "Runway AIが開発するテキストから動画を生成するAIモデルのシリーズ。クリエイティブな動画制作ツールとして注目されている。",
     "link": "https://runwayml.com/blog/gen3alpha/"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "Luma Dream Machine",
     "definition": "Luma AIが開発した動画生成AIモデル。テキストや画像から高品質な3Dシーンや動画を生成できる。",
     "link": "https://lumalabs.ai/dream-machine"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "ディープフェイク (深層偽造)技術",
     "definition": "AI、特にディープラーニングを用いて、人物の顔や音声を合成し、あたかもその人物が実際に存在しない言動をしたかのように見せかける技術。偽情報の拡散に悪用されるリスクがある。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%A3%E3%83%BC%E3%83%97%E3%83%95%E3%82%A7%E3%82%A4%E3%82%AF"
   },
   {
-    "chapter": "第2章 生成AI (ジェネレーティブAI)",
+    "chapter": "第2章 生成AI",
     "term": "偽情報(ディスインフォメーション)",
     "definition": "意図的に誤解させる目的で作成・拡散される虚偽または不正確な情報。ディープフェイク技術によってその拡散が加速される懸念がある。",
     "link": "https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%A3%E3%82%B9%E3%82%A4%E3%83%B3%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "テキスト生成AI",
+    "definition": "テキスト生成AIとは、ユーザーからの指示や質問に対して、AIが自動で文章を生成する技術やサービスのこと。大量のテキストデータを学習し、人間らしい自然な文章や要約、翻訳、校正などを行うことができる。",
+    "link": "https://www.itreview.jp/categories/text-generative-ai"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "画像のリサイズ",
+    "definition": "画像のリサイズとは、画像の縦横サイズ（ピクセル数）を変更する処理。主に画像の保存やWeb掲載、AI学習用データの標準化などに使われる。縦横比を維持したまま縮小・拡大することも可能。",
+    "link": "https://saruwakakun.com/tools/image-resize/"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "正規化",
+    "definition": "正規化とは、データを一定の規則や基準に従って変換し、利用しやすい形に整えること。AI分野では、画像や数値データを0〜1の範囲に揃えるなど、学習効率や精度向上のために使われる。",
+    "link": "https://ja.wikipedia.org/wiki/%E6%AD%A3%E8%A6%8F%E5%8C%96"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "データの水増し（augmentation）",
+    "definition": "データの水増し（データ拡張、augmentation）とは、元データに変換や加工を加えて新しいバリエーションを作り、AIモデルの学習データ量を人工的に増やす技術。画像の回転や反転、ノイズ付加などが代表的。",
+    "link": "https://nulmil.net/data-augmentation/"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "データ拡張技術",
+    "definition": "データ拡張技術とは、既存データに様々な変換（画像の回転、反転、明るさ調整など）を加えることで、学習に使うデータの量と多様性を人工的に増やす手法。AIモデルの汎化性能向上に役立つ。",
+    "link": "https://ai-compass.weeybrid.co.jp/learning/boosting-learning-with-data-augmentation/"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "リマスタリング",
+    "definition": "リマスタリングとは、元のデータ（画像、音声、映像など）を最新の技術や基準で再処理し、品質を向上させること。AI分野では、古い画像や音声を高解像度化・ノイズ除去するなどの用途で使われる。",
+    "link": "https://ja.wikipedia.org/wiki/%E3%83%AA%E3%83%9E%E3%82%B9%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "ユーザーエクスペリエンス",
+    "definition": "ユーザーエクスペリエンス（UX）とは、ユーザーが製品やサービスを利用する際に得る体験や満足度のこと。AIサービスでは、操作のしやすさや応答の自然さ、品質の高さなどがUX向上のカギとなる。",
+    "link": "https://ja.wikipedia.org/wiki/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%A8%E3%82%AF%E3%82%B9%E3%83%9A%E3%83%AA%E3%82%A8%E3%83%B3%E3%82%B9"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "ディープフェイク（深層偽造）技術",
+    "definition": "ディープフェイクとは、AI技術（主にディープラーニング）を用いて、人物の顔や声などを本物そっくりに合成・置換する技術。偽情報の拡散やプライバシー侵害などのリスクも指摘されている。",
+    "link": "https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%A3%E3%83%BC%E3%83%97%E3%83%95%E3%82%A7%E3%82%A4%E3%82%AF"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "偽情報（ディスインフォメーション）",
+    "definition": "偽情報（ディスインフォメーション）とは、意図的に作られた虚偽の情報や誤解を招く情報のこと。ディープフェイク技術などによって拡散されることが増えており、社会的な問題となっている。",
+    "link": "https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%A3%E3%82%B9%E3%82%A4%E3%83%B3%E3%83%95%E3%82%A9%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "大規模言語モデル（LLM）",
+    "definition": "大規模言語モデル（LLM）は、膨大なテキストデータを学習して自然言語を理解・生成するAIモデル。ChatGPTやBERTなどが代表例で、さまざまなタスクに応用されている。",
+    "link": "https://www.sbbit.jp/article/cont1/115335"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "ファインチューニング",
+    "definition": "ファインチューニングは、既存のAIモデルを特定の用途やデータに合わせて追加学習させることで、精度や応用性を高める手法。",
+    "link": "https://www.keyence.co.jp/ss/general/ai/column/ai-003.html"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "プロンプトエンジニアリング",
+    "definition": "プロンプトエンジニアリングは、生成AIに最適な出力を得るために、入力文（プロンプト）を工夫・設計する技術やノウハウのこと。",
+    "link": "https://www.sbbit.jp/article/cont1/116689"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "マルチモーダルAI",
+    "definition": "マルチモーダルAIは、テキスト・画像・音声など複数の異なる種類のデータを統合的に処理・理解できるAI技術。",
+    "link": "https://www.sbbit.jp/article/cont1/117033"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "トランスフォーマー",
+    "definition": "トランスフォーマーは、自然言語処理や画像処理などで使われるAIモデルの一種で、自己注意機構（Self-Attention）を用いて高精度な処理を実現する。",
+    "link": "https://www.sbbit.jp/article/cont1/117033"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "バイアス",
+    "definition": "バイアスは、AIが学習データに含まれる偏りをそのまま反映し、不公平な判断や出力を行う現象。AI倫理や社会的課題として注目されている。",
+    "link": "https://www.meti.go.jp/policy/mono_info_service/joho/genai/ai-bias.html"
+  },
+  {
+    "chapter": "第3章 現在の生成AIの動向",
+    "term": "著作権",
+    "definition": "著作権は、創作物の作者が持つ知的財産権であり、生成AIが作成したコンテンツの権利や利用範囲が近年議論されている。",
+    "link": "https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/genai/"
   },
   {
     "chapter": "第4章 情報リテラシー・基本理念とAI社会原則",
@@ -1221,11 +1322,26 @@ function populateChapters() {
 
 // 単語を表示する
 function showWord(word) {
+    if (!word) return;
     termEl.textContent = word.term;
     definitionEl.textContent = word.definition;
     linkEl.href = word.link;
     chapterEl.textContent = word.chapter;
     flashcard.classList.remove('flipped');
+}
+
+// 次の単語を表示する
+function showNextWord() {
+    if (currentWords.length === 0) return;
+    currentIndex = (currentIndex + 1) % currentWords.length;
+    showWord(currentWords[currentIndex]);
+}
+
+// 前の単語を表示する
+function showPrevWord() {
+    if (currentWords.length === 0) return;
+    currentIndex = (currentIndex - 1 + currentWords.length) % currentWords.length;
+    showWord(currentWords[currentIndex]);
 }
 
 // ランダムな単語を表示する
@@ -1237,9 +1353,8 @@ function showRandomWord() {
         chapterEl.textContent = '';
         return;
     }
-    const randomIndex = Math.floor(Math.random() * currentWords.length);
-    const word = currentWords[randomIndex];
-    showWord(word);
+    currentIndex = Math.floor(Math.random() * currentWords.length);
+    showWord(currentWords[currentIndex]);
 }
 
 // 章が変更されたときの処理
@@ -1257,7 +1372,7 @@ chapterSelect.addEventListener('change', function() {
 searchInput.addEventListener('input', function() {
     const inputValue = this.value;
     autocompleteList.innerHTML = '';
-    if (!inputValue) return false;
+    if (!inputValue) return;
 
     const suggestions = currentWords.filter(word => 
         word.term.toLowerCase().includes(inputValue.toLowerCase())
@@ -1268,6 +1383,7 @@ searchInput.addEventListener('input', function() {
         suggestionDiv.innerHTML = suggestedWord.term;
         suggestionDiv.addEventListener('click', function() {
             showWord(suggestedWord);
+            currentIndex = currentWords.findIndex(word => word.term === suggestedWord.term && word.chapter === suggestedWord.chapter);
             searchInput.value = '';
             autocompleteList.innerHTML = '';
         });
@@ -1282,11 +1398,6 @@ document.addEventListener('click', function (e) {
     }
 });
 
-
-// 初期表示
-populateChapters();
-showRandomWord();
-
 // カードをクリックしたときの処理
 flashcard.addEventListener('click', () => {
     flashcard.classList.toggle('flipped');
@@ -1294,3 +1405,40 @@ flashcard.addEventListener('click', () => {
 
 // ランダム表示ボタンをクリックしたときの処理
 randomBtn.addEventListener('click', showRandomWord);
+
+// スワイプ処理
+function handleSwipe() {
+    const swipeThreshold = 50; // スワイプと判定する最小距離
+    if (touchStartX - touchEndX > swipeThreshold) {
+        showNextWord(); // 左スワイプ
+    } else if (touchEndX - touchStartX > swipeThreshold) {
+        showPrevWord(); // 右スワイプ
+    }
+}
+
+flashcardContainer.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+flashcardContainer.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+// キーボード操作
+document.addEventListener('keydown', (e) => {
+    if (e.target === searchInput) return; // 検索入力中は無効
+
+    if (e.key === 'ArrowLeft') {
+        showPrevWord();
+    } else if (e.key === 'ArrowRight') {
+        showNextWord();
+    } else if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault(); // スペースキーでのスクロールを防止
+        flashcard.classList.toggle('flipped');
+    }
+});
+
+// 初期表示
+populateChapters();
+showRandomWord();

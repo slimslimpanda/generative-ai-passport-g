@@ -200,3 +200,8 @@ h1 {
     color: #d90429;
     text-decoration: underline;
 }
+
+/* フリック操作のためのスタイル */
+#flashcard-container {
+    touch-action: pan-y; /* 縦方向のスクロールを有効にする */
+}
