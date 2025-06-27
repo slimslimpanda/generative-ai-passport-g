@@ -34,6 +34,7 @@ h1 {
 @media (max-width: 768px) {
     h1 {
         font-size: 1.8rem;
+        margin-bottom: 0;
     }
 
     .controls {
