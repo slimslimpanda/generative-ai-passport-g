@@ -19,11 +19,11 @@ body {
 
 h1 {
     color: #1d3557;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
 }
 
 .controls {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
